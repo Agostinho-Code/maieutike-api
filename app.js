@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const path = require('path');
+const multer = require('multer');
 const errorHandler = require('./src/config/middleware/errorHandler'); // middleware de erros
 
 const app = express();
@@ -26,6 +28,26 @@ app.use('/interesses', require('./src/config/routes/interesseRoutes'));
 app.use('/badges', require('./src/config/routes/badgeRoutes'));
 app.use('/notificacoes', require('./src/config/routes/notificacaoRoutes'));
 app.use('/interacoes', require('./src/config/routes/interacaoRoutes'));
+
+// 🔹 Configuração do upload de imagens
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+
+const upload = multer({ storage });
+
+// Rota de upload
+app.post('/upload', upload.single('image'), (req, res) => {
+  res.json({
+    message: 'Upload realizado com sucesso!',
+    file: req.file,
+    url: `/uploads/${req.file.filename}`
+  });
+});
+
+// Servir arquivos estáticos da pasta uploads
+app.use('/uploads', express.static('uploads'));
 
 // Middleware de tratamento de erros (sempre por último)
 app.use(errorHandler);
