@@ -10,8 +10,7 @@ exports.getInteracoes = async (req, res, next) => {
   }
 };
 
-// Buscar uma interação por ID
-exports.getInteracaoById = async (req, res, next) => {
+exports.getInteracaoById = async (req, res) => {
   try {
     const interacao = await Interacao.getById(req.params.id);
     if (!interacao) {
@@ -19,15 +18,16 @@ exports.getInteracaoById = async (req, res, next) => {
     }
     res.json(interacao);
   } catch (error) {
-    next(error);
+    console.error('Erro ao buscar interação:', error);
+    res.status(500).json({ message: 'Erro ao buscar interação' });
   }
 };
 
 // Criar nova interação
 exports.createInteracao = async (req, res, next) => {
   try {
-    const novaInteracao = await Interacao.create(req.body);
-    res.status(201).json(novaInteracao);
+    const novaInteracaoId = await Interacao.create(req.body);
+    res.status(201).json({ message: 'Interação criada com sucesso!', id: novaInteracaoId });
   } catch (error) {
     next(error);
   }
@@ -36,8 +36,8 @@ exports.createInteracao = async (req, res, next) => {
 // Atualizar interação
 exports.updateInteracao = async (req, res, next) => {
   try {
-    const atualizada = await Interacao.update(req.params.id, req.body);
-    res.json(atualizada);
+    await Interacao.update(req.params.id, req.body);
+    res.json({ message: 'Interação atualizada com sucesso!' });
   } catch (error) {
     next(error);
   }
@@ -47,7 +47,7 @@ exports.updateInteracao = async (req, res, next) => {
 exports.deleteInteracao = async (req, res, next) => {
   try {
     await Interacao.delete(req.params.id);
-    res.json({ message: 'Interação deletada com sucesso' });
+    res.json({ message: 'Interação deletada com sucesso!' });
   } catch (error) {
     next(error);
   }

@@ -7,27 +7,44 @@ class Interacao {
   }
 
   static async getById(id) {
-    const [rows] = await db.query('SELECT * FROM interacoes WHERE id = ?', [id]);
+    const [rows] = await db.query('SELECT * FROM interacoes WHERE id_interacao = ?', [id]);
     return rows[0];
   }
 
   static async create(data) {
-    const { usuario_id, mensagem } = data;
+    const { id_usuario, tipo, descricao } = data;
     const [result] = await db.query(
-      'INSERT INTO interacoes (usuario_id, mensagem) VALUES (?, ?)',
-      [usuario_id, mensagem]
+      'INSERT INTO interacoes (id_usuario, tipo, descricao) VALUES (?, ?, ?)',
+      [id_usuario, tipo, descricao]
     );
-    return { id: result.insertId, usuario_id, mensagem };
+    return result.insertId;
   }
 
   static async update(id, data) {
-    const { mensagem } = data;
-    await db.query('UPDATE interacoes SET mensagem = ? WHERE id = ?', [mensagem, id]);
-    return { id, mensagem };
+    const { descricao, tipo } = data;
+
+    if (descricao !== undefined && tipo !== undefined) {
+      await db.query(
+        'UPDATE interacoes SET descricao = ?, tipo = ? WHERE id_interacao = ?',
+        [descricao, tipo, id]
+      );
+    } else if (descricao !== undefined) {
+      await db.query(
+        'UPDATE interacoes SET descricao = ? WHERE id_interacao = ?',
+        [descricao, id]
+      );
+    } else if (tipo !== undefined) {
+      await db.query(
+        'UPDATE interacoes SET tipo = ? WHERE id_interacao = ?',
+        [tipo, id]
+      );
+    } else {
+      throw new Error('Nenhum campo válido para atualizar (use "descricao" e/ou "tipo").');
+    }
   }
 
   static async delete(id) {
-    await db.query('DELETE FROM interacoes WHERE id = ?', [id]);
+    await db.query('DELETE FROM interacoes WHERE id_interacao = ?', [id]);
   }
 }
 
