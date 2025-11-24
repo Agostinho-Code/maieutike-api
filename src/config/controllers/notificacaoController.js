@@ -5,6 +5,14 @@ exports.getNotificacoes = async (req, res) => {
   res.json(notificacoes);
 };
 
+exports.getNotificacaoById = async (req, res) => {
+  const notificacao = await Notificacao.getById(req.params.id);
+  if (!notificacao) {
+    return res.status(404).json({ message: 'Notificação não encontrada' });
+  }
+  res.json(notificacao);
+};
+
 exports.createNotificacao = async (req, res) => {
   await Notificacao.create(req.body);
   res.status(201).send({ message: 'Notificação criada!' });

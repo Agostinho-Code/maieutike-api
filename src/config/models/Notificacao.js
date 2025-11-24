@@ -6,14 +6,24 @@ class Notificacao {
     const [rows] = await db.query('SELECT * FROM notificacoes');
     return rows;
   }
+  
+
+  static async getById(id) {
+    const [rows] = await db.query('SELECT * FROM notificacoes WHERE id_notificacao = ?', [id]);
+    return rows[0];
+  }
 
   static async create(data) {
-    const { id_usuario, mensagem } = data;
-    await db.query(
-      'INSERT INTO notificacoes (id_usuario, mensagem) VALUES (?, ?)',
-      [id_usuario, mensagem]
-    );
-  }
+  const { id_usuario, titulo, mensagem } = data;
+
+  const [result] = await db.query(
+    'INSERT INTO notificacoes (id_usuario, mensagem) VALUES (?, ?)',
+    [id_usuario, mensagem]
+  );
+
+  return result.insertId;
+}
+
 
   static async update(id, data) {
     const { lida } = data;

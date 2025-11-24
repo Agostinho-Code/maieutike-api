@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const path = require('path');
 const fs = require('fs');
 
-
 const app = express();
 
 // Middlewares globais
@@ -21,14 +20,14 @@ app.get('/ping', (req, res) => {
 app.use('/usuarios', require('./src/config/routes/usuarioRoutes'));
 app.use('/disciplinas', require('./src/config/routes/disciplinaRoutes'));
 app.use('/salas', require('./src/config/routes/salaRoutes'));
-app.use('/materiais', require('./src/config/routes/materialRoutes')); // aqui ficam as rotas de upload
+app.use('/materiais', require('./src/config/routes/materialRoutes')); // upload
 app.use('/chat', require('./src/config/routes/chatRoutes'));
 app.use('/chat-mensagens', require('./src/config/routes/chatMensagemRoutes'));
 app.use('/reputacao', require('./src/config/routes/reputacaoRoutes'));
 app.use('/interesses', require('./src/config/routes/interesseRoutes'));
 app.use('/badges', require('./src/config/routes/badgeRoutes'));
-app.use('/notificacoes', require('./src/config/routes/notificacaoRoutes'));
-app.use('/interacoes', require('./src/config/routes/interacaoRoutes'));
+app.use('/notificacoes', require('./src/config/routes/notificacaoRoutes')); // ✅ rota de notificações
+app.use('/interacoes', require('./src/config/routes/interacaoRoutes'));     // ✅ rota de interações
 
 // 🔹 Garantir que a pasta uploads existe
 const uploadDir = path.join(__dirname, 'uploads');
@@ -38,8 +37,5 @@ if (!fs.existsSync(uploadDir)) {
 
 // Servir arquivos estáticos da pasta uploads
 app.use('/uploads', express.static(uploadDir));
-
-
-
 
 module.exports = app;

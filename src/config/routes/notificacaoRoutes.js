@@ -6,5 +6,6 @@ router.get('/', notificacaoController.getNotificacoes);
 router.post('/', notificacaoController.createNotificacao);
 router.put('/:id', notificacaoController.updateNotificacao);
 router.delete('/:id', notificacaoController.deleteNotificacao);
+router.get('/:id', notificacaoController.getNotificacaoById);
 
 module.exports = router;
