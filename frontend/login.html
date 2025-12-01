@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Portal Educacional</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+                         CSS
+           ========================================= */
+        :root {
+            --primary-color: #2d8b8b;  /* Verde Água */
+            --primary-dark: #236e6e;   /* Hover */
+            --bg-color: #f4f7f6;       /* Fundo */
+            --card-bg: #ffffff;        /* Cards */
+            --text-color: #333;        
+            --text-muted: #777;        
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(135deg, #f4f7f6 0%, #e0ebeb 100%);
+        }
+
+        .login-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-area { margin-bottom: 25px; }
+        .logo-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .app-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        /* --- SELETOR DE PERFIL --- */
+        .role-selector {
+            display: flex;
+            background: #f0f2f5;
+            padding: 5px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .role-selector input[type="radio"] { display: none; }
+
+        .role-selector label {
+            flex: 1; text-align: center; padding: 10px 5px; border-radius: 25px; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; color: #777; transition: all 0.3s; z-index: 2;
+        }
+
+        .role-selector input:checked + label {
+            background-color: var(--primary-color); color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        /* --- FORMULÁRIO --- */
+        .input-group { margin-bottom: 20px; text-align: left; }
+        
+        .input-label {
+            font-size: 0.85rem; font-weight: 700; margin-bottom: 5px; display: block; color: #555; margin-left: 10px;
+        }
+
+        .input-wrapper { position: relative; }
+
+        .input-wrapper i {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa; transition: color 0.3s;
+        }
+
+        .form-input {
+            width: 100%; padding: 12px 15px 12px 45px; border: 2px solid #f0f2f5;
+            background-color: #f0f2f5; border-radius: 25px; font-size: 1rem; outline: none; transition: all 0.3s; color: #333;
+        }
+
+        .form-input:focus { background-color: #fff; border-color: var(--primary-color); }
+        .form-input:focus + i { color: var(--primary-color); }
+
+        .btn-login {
+            background-color: var(--primary-color); color: white; border: none; width: 100%;
+            padding: 12px; border-radius: 25px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            transition: background 0.3s, transform 0.2s; margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(45, 139, 139, 0.2);
+        }
+
+        .btn-login:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+
+        .extra-links { margin-top: 25px; font-size: 0.9rem; }
+        .extra-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .extra-links a:hover { color: var(--primary-color); }
+
+        @media (max-width: 450px) {
+            .login-container { box-shadow: none; background: transparent; padding: 20px; }
+            .role-selector { background: rgba(255,255,255,0.6); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logo-area">
+            <i class="fas fa-graduation-cap logo-icon"></i>
+            <h1 class="app-name">Acesso Acadêmico</h1>
+        </div>
+
+        <form id="loginForm" onsubmit="realizarLogin(event)">
+            
+            <div class="role-selector">
+                <input type="radio" name="role" id="role-aluno" value="aluno" checked onchange="mudarPlaceholder()">
+                <label for="role-aluno">Aluno</label>
+
+                <input type="radio" name="role" id="role-prof" value="professor" onchange="mudarPlaceholder()">
+                <label for="role-prof">Professor</label>
+
+                <input type="radio" name="role" id="role-servidor" value="servidor" onchange="mudarPlaceholder()">
+                <label for="role-servidor">Servidor</label>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" id="label-user">Nsa ou E-mail</label>
+                <div class="input-wrapper">
+                    <input type="text" id="input-user" class="form-input" placeholder="0000.0000.00" required>
+                    <i class="fas fa-id-card"></i>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" class="form-input" placeholder="••••••••" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="#" style="font-size: 0.85rem; color: #777; text-decoration: none;">Esqueceu a senha?</a>
+            </div>
+
+            <button type="submit" class="btn-login" id="btn-entrar">
+                Entrar
+            </button>
+        </form>
+
+        <div class="extra-links">
+            <span>Primeiro acesso? <a href="#" style="color: var(--primary-color);">Ativar conta</a></span>
+        </div>
+    </div>
+
+   <script>
+    async function realizarLogin(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-entrar');
+        const originalText = btn.innerText;
+
+        // Feedback visual
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+        btn.style.opacity = '0.8';
+
+        // Captura os dados digitados
+        const email = document.getElementById('input-user').value;
+        const senha = document.querySelector('input[type="password"]').value;
+
+        try {
+            const resp = await fetch("http://localhost:3000/usuarios/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, senha })
+            });
+
+            const data = await resp.json();
+
+            if (data.sucesso) {
+                alert("Login OK!");
+
+                // Salva os dados do usuário
+                localStorage.setItem("usuarioLogado", JSON.stringify(data));
+
+                // Redireciona conforme o tipo
+                if (data.tipo === "professor") {
+                    window.location.href = "homeProfessor.html";
+                } else if (data.tipo === "aluno") {
+                    window.location.href = "homeAluno.html";
+                } else {
+                    window.location.href = "home.html"; // padrão
+                }
+            } else {
+                alert(data.message || "Credenciais inválidas");
+                btn.innerText = originalText;
+                btn.style.opacity = '1';
+            }
+        } catch (error) {
+            alert("Erro ao conectar com o servidor");
+            btn.innerText = originalText;
+            btn.style.opacity = '1';
+        }
+    }
+</script>
+
+
+
+</body>
+</html>
