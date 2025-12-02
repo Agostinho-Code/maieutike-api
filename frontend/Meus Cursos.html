@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Meus Cursos - Beatris Caetano</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <Style>
+        /* ================================================= */
+/* 0. Reset Básico */
+/* ================================================= */
+body {
+    margin: 0; 
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: white; 
+}
+
+
+/* ================================================= */
+/* 1. Estilos para o Cabeçalho (Cor: #308989) */
+/* ================================================= */
+.cursos-header {
+    width: 100%;
+    background-color: #308989; 
+    padding: 20px 3%; 
+    box-sizing: border-box;
+}
+
+.header-content {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between; 
+    flex-wrap: nowrap; 
+}
+
+.cursos-header h1 {
+    color: white; 
+    margin: 0; 
+    font-size: 1.8em; 
+    flex-shrink: 1; 
+    min-width: 0; 
+}
+
+/* 2. Estilos do Perfil (Beatris Caetano e BC em Círculo) */
+.profile {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 1.1em;
+    flex-shrink: 1; 
+    min-width: 0; 
+}
+
+.name {
+    font-weight: bold;
+    white-space: nowrap; 
+}
+
+.initials {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    margin-left: 15px; 
+    border-radius: 50%; 
+    background-color: white; 
+    color: #308989; 
+    font-weight: bold;
+    font-size: 1.2em;
+    flex-shrink: 0; 
+}
+
+
+/* ================================================= */
+/* 3. Estilos dos Cards de Cursos (Cor: #308989) */
+/* ================================================= */
+.cursos-container {
+    padding: 40px 3%; 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 20px; 
+    justify-content: center; 
+    max-width: 1200px; 
+    margin: 40px auto; 
+}
+
+.curso-card {
+    background-color: #308989; 
+    color: white; 
+    border-radius: 8px; 
+    padding: 20px;
+    text-align: center;
+    text-decoration: none; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 180px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #308989; 
+}
+
+.curso-card:hover {
+    background-color: #4a9e9e; 
+    transform: translateY(-3px); 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); 
+    cursor: pointer;
+}
+
+/* Estilo do Ícone com as Siglas (MANTIDO NEUTRO) */
+.curso-icon {
+    width: 80px;
+    height: 80px;
+    background-color: white; 
+    border-radius: 50%; 
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8em; 
+    font-weight: bold;
+    color: #308989; 
+    text-transform: uppercase; 
+    border: 1px solid #ddd; 
+}
+
+.curso-title {
+    font-size: 0.9em; 
+    font-weight: bold;
+    color: white; 
+    text-transform: uppercase; 
+    line-height: 1.3;
+}
+    </Style>
+</head>
+<body>
+
+    <header class="cursos-header">
+        <div class="header-content">
+            <h1>Meus Cursos</h1>
+            <div class="profile">
+                <span class="name">Beatris Caetano</span> 
+                <span class="initials">BC</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="cursos-container">
+        
+        <a href="Programação Web.html" class="curso-card">
+            <div class="curso-icon">PW</div>
+            <div class="curso-title">PROGRAMAÇÃO WEB</div>
+        </a>
+
+        <a href="banco de dados.html" class="curso-card">
+            <div class="curso-icon">BD</div>
+            <div class="curso-title">BANCO DE DADOS</div>
+        </a>
+
+        <a href="Redes de Computadores.html" target="_blank" class="curso-card">
+            <div class="curso-icon">RC</div>
+            <div class="curso-title">REDES DE COMPUTADORES</div>
+        </a>
+
+        <a href="desenvolvimento de sistemas.html" class="curso-card">
+            <div class="curso-icon">DS</div>
+            <div class="curso-title">DESENVOLVIMENTO DE SISTEMAS</div>
+        </a>
+
+        <a href="Programação de Aplicativos Mobile.html" class="curso-card">
+            <div class="curso-icon">PAM</div>
+            <div class="curso-title">PROGRAMAÇÃO DE APLICATIVOS MOBILE</div>
+        </a>
+
+        <a href="Internet e Protocolo.html" class="curso-card">
+            <div class="curso-icon">IP</div>
+            <div class="curso-title">INTERNET E PROTOCOLOS</div>
+        </a>
+
+        <a href="TCC.html" class="curso-card">
+            <div class="curso-icon">TCC</div>
+            <div class="curso-title">DESENVOLVIMENTO DO TCC EM DESENVOLVIMENTO DE SISTEMAS</div>
+        </a>
+
+        <a href="Linhuagem e trabalho.html" class="curso-card">
+            <div class="curso-icon">LTT</div>
+            <div class="curso-title">LINGUAGEM, TRABALHO E TECNOLOGIA</div>
+        </a>
+
+        <a href="Segurança de sistemas de informação.html" class="curso-card">
+            <div class="curso-icon">SSI</div>
+            <div class="curso-title">SEGURANÇA DE SISTEMAS DE INFORMAÇÃO</div>
+        </a>
+
+    </main>
+
+</body>
+</html>
