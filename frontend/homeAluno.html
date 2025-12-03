@@ -299,9 +299,67 @@
                 </div>
 
             </div>
+            
 
         </main>
     </div>
+    <script>
+    async function carregarAluno() {
+        const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+        if (!usuario || usuario.tipo !== "aluno") {
+            window.location.href = "login.html"; // bloqueia acesso se não for aluno
+            return;
+        }
+
+        // Header
+        document.querySelector(".user-info span").innerText = usuario.nome;
+        document.querySelector(".avatar-circle").innerText = usuario.nome.charAt(0).toUpperCase();
+
+        // Welcome card
+        document.querySelector(".welcome-card h1").innerText = `Olá, ${usuario.nome}! 👋`;
+
+        try {
+            // Chamada à API para buscar dados do aluno
+            const resp = await fetch(`http://localhost:3000/alunos/${usuario.id}/dashboard`);
+            const data = await resp.json();
+
+            // Atualiza estatísticas
+            document.querySelector(".stats-grid .stat-info h3").innerText = data.cursosAtivos;
+            document.querySelector(".stats-grid .stat-card:nth-child(2) .stat-info h3").innerText = data.horasEstudadas;
+            document.querySelector(".stats-grid .stat-card:nth-child(3) .stat-info h3").innerText = data.mediaGeral;
+
+            // Renderiza cursos dinamicamente
+            const grid = document.querySelector(".courses-grid");
+            grid.innerHTML = ""; // limpa cursos fixos
+
+            data.cursos.forEach(curso => {
+                const card = document.createElement("div");
+                card.className = "course-card";
+                card.innerHTML = `
+                    <div class="course-header" style="background: linear-gradient(45deg, #2d8b8b, #48dbfb);">
+                        <span class="course-tag">${curso.categoria}</span>
+                    </div>
+                    <div class="course-body">
+                        <div class="course-title">${curso.nome}</div>
+                        <p class="course-desc">${curso.descricao}</p>
+                        <div class="activity-count">
+                            <i class="fas fa-tasks"></i> ${curso.atividades} Atividades ativas
+                        </div>
+                        <a href="${curso.link}" class="btn-course">Acessar Sala</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar dados do aluno:", error);
+        }
+    }
+
+    carregarAluno();
+</script>
+
+
     
 </body>
 </html>

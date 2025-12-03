@@ -236,7 +236,8 @@
                 <span>💬</span> Salas de Aula
             </div>
             <div class="nav-item">
-                <span>🎯</span> Atividades
+                <span>🎯</span> <a href="criarMaterial.html" class="nav-item"><i class="fas fa-tasks"></i> Atividades</a>
+
             </div>
             <div class="nav-item">
                 <span>📈</span> Desempenho
@@ -324,47 +325,137 @@
     </div>
 
     <script>
-    // 🔑 Recupera dados do usuário logado
-    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
-
-    if (!usuario || usuario.tipo !== "professor") {
-        window.location.href = "login.html"; // bloqueia acesso se não for professor
-    } else {
-        // Header
-        document.querySelector(".user-info span").innerText = "Prof. " + usuario.nome;
-        document.querySelector(".avatar").innerText = usuario.nome.charAt(0).toUpperCase();
-
-        // Welcome Banner
-        document.querySelector(".welcome-banner h1").innerText = `Bem-vindo(a), Professor(a) ${usuario.nome}! 👋`;
+window.onload = async () => {
+    const materialId = localStorage.getItem("materialSelecionado");
+    if (!materialId) {
+        alert("Nenhum material selecionado. Crie um material primeiro!");
+        window.location.href = "criarMaterial.html";
+        return;
     }
 
-    // 📌 Navegação da sidebar
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function() {
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
+    await carregarMaterialSelecionado(materialId);
+    await loadFilesFromAPI(materialId);
+};
 
-    // 📌 Ações rápidas
-    document.querySelectorAll('.action-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const action = this.querySelector('h3').textContent;
-            alert(`Abrindo: ${action}`);
-        });
-    });
+async function carregarMaterialSelecionado(materialId) {
+    try {
+        const resp = await fetch(`http://localhost:3000/materiais/${materialId}`);
+        if (!resp.ok) throw new Error("Erro ao buscar material");
+        const material = await resp.json();
 
-    // 📌 Botões principais
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const action = this.textContent.trim();
-            if (action.includes("Criar Nova Sala")) {
-                alert("Criando nova sala...");
-            } else if (action.includes("Ver Relatórios")) {
-                alert("Abrindo relatórios...");
-            }
+        document.getElementById("materialTitulo").innerText = `Material: ${material.titulo}`;
+    } catch (error) {
+        console.error(error);
+        document.getElementById("materialTitulo").innerText = "Erro ao carregar material";
+    }
+}
+
+async function addFile() {
+    const fileInput = document.getElementById('fileInput');
+    const commentInput = document.getElementById('commentInput');
+
+    if (fileInput.files.length === 0) { 
+        alert("Selecione um arquivo!"); 
+        return; 
+    }
+    if (commentInput.value.trim() === "") { 
+        alert("Digite um comentário!"); 
+        return; 
+    }
+
+    try {
+        const materialId = localStorage.getItem("materialSelecionado"); 
+        if (!materialId) {
+            alert("Crie ou selecione um material primeiro!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("arquivo", fileInput.files[0]);
+        formData.append("descricao", commentInput.value);
+
+        const resp = await fetch(`http://localhost:3000/materiais/${materialId}/upload`, {
+            method: "POST",
+            body: formData
         });
-    });
+
+        if (!resp.ok) throw new Error("Erro ao enviar arquivo");
+
+        await resp.json();
+        alert("Arquivo anexado com sucesso!");
+
+        await loadFilesFromAPI(materialId);
+
+        fileInput.value = "";
+        commentInput.value = "";
+
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao salvar no repositório");
+    }
+}
+
+async function loadFilesFromAPI(materialId) {
+    try {
+        const resp = await fetch(`http://localhost:3000/materiais/${materialId}/uploads`);
+
+        if (!resp.ok) throw new Error("Erro ao carregar arquivos");
+        const files = await resp.json();
+
+        const list = document.getElementById('repoList');
+        list.innerHTML = "";
+
+        if (!files || files.length === 0) {
+            list.innerHTML = "<p>Nenhum arquivo anexado ainda.</p>";
+            return;
+        }
+
+        files.forEach(file => {
+            list.innerHTML += `
+                <div class="file-card">
+                    <div class="file-info">
+                        <div class="file-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="file-details">
+                            <h4>${file.originalName || file.nome}</h4>
+                            <div class="file-meta">
+                                <span><i class="far fa-calendar-alt"></i> ${file.data || ""}</span>
+                                <span><i class="fas fa-user"></i> ${file.professor || ""}</span>
+                            </div>
+                            <div class="file-comment">"${file.descricao || file.comentario || ""}"</div>
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <a href="${file.url}" class="btn-action btn-download" target="_blank">
+                            <i class="fas fa-download"></i> Baixar
+                        </a>
+                        <a href="#" onclick="deleteFile('${file.id}')" class="btn-action btn-delete">
+                            <i class="fas fa-trash"></i> Excluir
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error(error);
+        document.getElementById('repoList').innerHTML = "<p>Erro ao carregar arquivos.</p>";
+    }
+}
+
+async function deleteFile(fileId) {
+    try {
+        const resp = await fetch(`http://localhost:3000/materiais/uploads/${fileId}`, {
+            method: "DELETE"
+        });
+        if (!resp.ok) throw new Error("Erro ao deletar arquivo");
+
+        alert("Arquivo excluído com sucesso!");
+        const materialId = localStorage.getItem("materialSelecionado");
+        await loadFilesFromAPI(materialId);
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao excluir arquivo");
+    }
+}
 </script>
 
 </body>

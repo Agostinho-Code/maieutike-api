@@ -1,122 +1,146 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repositório (Aluno) - Portal Educacional</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* CSS REUTILIZADO DO DASHBOARD */
-        :root { --primary-color: #2d8b8b; --primary-dark: #236e6e; --primary-light: #e0ebeb; --bg-color: #f4f7f6; --card-bg: #ffffff; --text-color: #333; --border-radius: 12px; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); }
-        
-        header { background-color: var(--primary-color); color: white; padding: 0 30px; height: 70px; display: flex; align-items: center; justify-content: space-between; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .avatar-circle { width: 40px; height: 40px; background-color: white; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-        
-        .container { display: flex; padding-top: 70px; min-height: 100vh; }
-        .sidebar { width: 250px; background: var(--card-bg); padding: 20px; border-right: 1px solid #eee; position: fixed; top: 70px; bottom: 0; left: 0; }
-        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: #666; text-decoration: none; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; font-weight: 600; }
-        .nav-item:hover { background-color: var(--primary-light); color: var(--primary-color); }
-        .nav-item.active { background-color: var(--primary-color); color: white; }
-        .nav-item i { width: 30px; text-align: center; margin-right: 5px; }
-        .main-content { margin-left: 250px; padding: 30px; flex: 1; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Repositório (Aluno) - Portal Educacional</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary-color:#2d8b8b; --primary-dark:#236e6e; --primary-light:#e0ebeb; --bg-color:#f4f7f6; --card-bg:#fff; --text-color:#333; --border-radius:12px; }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',sans-serif;}
+    body{background-color:var(--bg-color);color:var(--text-color);}
+    header{background-color:var(--primary-color);color:white;padding:0 30px;height:70px;display:flex;align-items:center;justify-content:space-between;position:fixed;width:100%;top:0;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    .logo{font-size:1.5rem;font-weight:800;display:flex;align-items:center;gap:10px;}
+    .avatar-circle{width:40px;height:40px;background-color:white;color:var(--primary-color);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;}
+    .container{display:flex;padding-top:70px;min-height:100vh;}
+    .sidebar{width:250px;background:var(--card-bg);padding:20px;border-right:1px solid #eee;position:fixed;top:70px;bottom:0;left:0;}
+    .nav-item{display:flex;align-items:center;padding:12px 15px;color:#666;text-decoration:none;border-radius:10px;margin-bottom:8px;transition:0.3s;font-weight:600;}
+    .nav-item:hover{background-color:var(--primary-light);color:var(--primary-color);}
+    .nav-item.active{background-color:var(--primary-color);color:white;}
+    .nav-item i{width:30px;text-align:center;margin-right:5px;}
+    .main-content{margin-left:250px;padding:30px;flex:1;}
+    .page-header{margin-bottom:30px;}
 
-        .page-header { margin-bottom: 30px; }
-        
-        /* Lista de Arquivos */
-        .file-list { display: flex; flex-direction: column; gap: 15px; }
-        .file-card {
-            background: white; padding: 20px; border-radius: var(--border-radius);
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-color);
-        }
-        .file-info { display: flex; align-items: center; gap: 20px; }
-        .file-icon { font-size: 2.5rem; color: #e74c3c; }
-        .file-details h4 { font-size: 1.1rem; color: #333; margin-bottom: 4px; }
-        .file-meta { font-size: 0.85rem; color: #777; display: flex; gap: 15px; }
-        .file-comment { margin-top: 5px; font-style: italic; color: #555; background: #f9f9f9; padding: 5px 10px; border-radius: 4px; display: inline-block;}
-        
-        .btn-download { background: var(--primary-light); color: var(--primary-color); padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: 0.3s;}
-        .btn-download:hover { background: var(--primary-color); color: white; }
-    </style>
+    /* Accordion */
+    .accordion-item{background:white;border-radius:var(--border-radius);margin-bottom:15px;box-shadow:0 2px 5px rgba(0,0,0,0.05);}
+    .accordion-header{padding:15px;cursor:pointer;font-weight:bold;background:var(--primary-light);display:flex;justify-content:space-between;align-items:center;}
+    .accordion-content{display:none;padding:15px;border-top:1px solid #eee;}
+    .accordion-content.active{display:block;}
+
+    /* Arquivos */
+    .file-card{background:#f9f9f9;padding:10px;border-radius:var(--border-radius);display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .file-info{display:flex;align-items:center;gap:15px;}
+    .file-icon{font-size:1.8rem;}
+    .file-details h4{font-size:1rem;margin-bottom:4px;}
+    .file-comment{font-style:italic;color:#555;}
+    .btn-download{background:var(--primary-light);color:var(--primary-color);padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:bold;transition:0.3s;}
+    .btn-download:hover{background:var(--primary-color);color:white;}
+  </style>
 </head>
 <body>
+  <header>
+    <div class="logo"><i class="fas fa-graduation-cap"></i> Portal do Aluno</div>
+    <div class="avatar-circle">AL</div>
+  </header>
 
-    <header>
-        <div class="logo"><i class="fas fa-graduation-cap"></i> Portal do Aluno</div>
-        <div class="avatar-circle">BC</div>
-    </header>
+  <div class="container">
+    <aside class="sidebar">
+      <a href="homeAluno.html" class="nav-item"><i class="fas fa-home"></i> Início</a>
+      <a href="MeusCursos.html" class="nav-item"><i class="fas fa-laptop-code"></i> Meus Cursos</a>
+      <a href="#" class="nav-item active"><i class="fas fa-folder"></i> Repositório</a>
+      <div style="margin-top:20px;border-top:1px solid #eee;padding-top:10px;">
+        <a href="login.html" class="nav-item" style="color:#e74c3c;"><i class="fas fa-sign-out-alt"></i> Sair</a>
+      </div>
+    </aside>
 
-    <div class="container">
-        <aside class="sidebar">
-            <a href="homeAluno.html" class="nav-item"><i class="fas fa-home"></i> Início</a>
-            
-            <a href="Meus Cursos.html" class="nav-item"><i class="fas fa-laptop-code"></i> Meus Cursos</a>
-            
-            <a href="#" class="nav-item active"><i class="fas fa-folder"></i> Repositório</a>
-            <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
-                <a href="Tela de login.html" class="nav-item" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> Sair</a>
-                
+    <main class="main-content">
+      <div class="page-header">
+        <h2>Repositório de Materiais</h2>
+        <p>Baixe os arquivos disponibilizados pelos professores.</p>
+      </div>
+      <div id="materialsAccordion"></div>
+      <div id="emptyMsg" style="text-align:center;color:#999;margin-top:50px;display:none;">
+        <i class="fas fa-folder-open" style="font-size:3rem;margin-bottom:10px;"></i>
+        <p>Nenhum arquivo disponível no momento.</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function getFileIcon(mimeType){
+      if(mimeType.includes("pdf")) return '<i class="fas fa-file-pdf" style="color:#e74c3c;"></i>';
+      if(mimeType.includes("image")) return '<i class="fas fa-file-image" style="color:#3498db;"></i>';
+      if(mimeType.includes("word")) return '<i class="fas fa-file-word" style="color:#2980b9;"></i>';
+      return '<i class="fas fa-file-alt" style="color:#777;"></i>';
+    }
+
+    async function loadMaterials(){
+      const container=document.getElementById("materialsAccordion");
+      const emptyMsg=document.getElementById("emptyMsg");
+      container.innerHTML="";
+
+      try{
+        const resp=await fetch("http://localhost:3000/materiais");
+        if(!resp.ok) throw new Error("Erro ao buscar materiais");
+        const materiais=await resp.json();
+
+        if(!materiais||materiais.length===0){
+          emptyMsg.style.display="block";
+          return;
+        }
+        emptyMsg.style.display="none";
+
+        for(const material of materiais){
+          const uploadsResp=await fetch(`http://localhost:3000/materiais/${material.id}/uploads`);
+          const uploadsData=await uploadsResp.json();
+          const arquivos=uploadsData.arquivos||[];
+
+          const item=document.createElement("div");
+          item.classList.add("accordion-item");
+          item.innerHTML=`
+            <div class="accordion-header">
+              <span><i class="fas fa-book"></i> ${material.titulo}</span>
+              <i class="fas fa-chevron-down"></i>
             </div>
-        </aside>
+            <div class="accordion-content">
+              <p>${material.descricao}</p>
+              ${arquivos.length===0? "<p style='color:#777;'>Nenhum arquivo anexado.</p>": ""}
+              ${arquivos.map(file=>`
+                <div class="file-card">
+                  <div class="file-info">
+                    <div class="file-icon">${getFileIcon(file.mimeType||"")}</div>
+                    <div class="file-details">
+                      <h4>${file.originalName}</h4>
+                      <div class="file-comment">"${file.descricao||""}"</div>
+                    </div>
+                  </div>
+                  <div>
+                    <a href="http://localhost:3000${file.url}" class="btn-download" target="_blank">
+  <i class="fas fa-download"></i> Baixar
+</a>
 
-        <main class="main-content">
-            <div class="page-header">
-                <h2>Repositório de Materiais</h2>
-                <p>Baixe os arquivos disponibilizados pelos professores.</p>
-            </div>
-
-            <div class="file-list" id="repoList">
+                  </div>
                 </div>
-            
-            <div id="emptyMsg" style="text-align:center; color:#999; margin-top:50px; display:none;">
-                <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 10px;"></i>
-                <p>Nenhum arquivo disponível no momento.</p>
+              `).join("")}
             </div>
-        </main>
-    </div>
-
-    <script>
-        // Carrega os dados salvos pelo professor
-        function loadFiles() {
-            const files = JSON.parse(localStorage.getItem('repoData')) || [];
-            const list = document.getElementById('repoList');
-            const emptyMsg = document.getElementById('emptyMsg');
-
-            list.innerHTML = '';
-
-            if (files.length === 0) {
-                emptyMsg.style.display = 'block';
-            } else {
-                emptyMsg.style.display = 'none';
-                files.forEach((file) => {
-                    list.innerHTML += `
-                        <div class="file-card">
-                            <div class="file-info">
-                                <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
-                                <div class="file-details">
-                                    <h4>${file.name}</h4>
-                                    <div class="file-meta">
-                                        <span><i class="far fa-calendar-alt"></i> ${file.date}</span>
-                                        <span><i class="fas fa-user-tie"></i> Professor</span>
-                                    </div>
-                                    <div class="file-comment">"${file.comment}"</div>
-                                </div>
-                            </div>
-                            <div>
-                                <a href="#" class="btn-download"><i class="fas fa-download"></i> Baixar</a>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
+          `;
+          container.appendChild(item);
         }
 
-        window.onload = loadFiles;
-    </script>
+        document.querySelectorAll(".accordion-header").forEach(header=>{
+          header.addEventListener("click",()=>{
+            const content=header.nextElementSibling;
+            content.classList.toggle("active");
+          });
+        });
+      }catch(error){
+        console.error(error);
+        container.innerHTML="<p>Erro ao carregar materiais.</p>";
+      }
+    }
+
+    window.onload=loadMaterials;
+  </script>
 </body>
 </html>

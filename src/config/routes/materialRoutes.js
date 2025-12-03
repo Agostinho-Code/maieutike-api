@@ -9,8 +9,6 @@ const router = express.Router();
 let materiais = [
   { id: 1, titulo: 'Material inicial', descricao: 'Exemplo de material', arquivos: [] }
 ];
-// 🔹 Simulação de uploads em memória
-let uploads = [];
 
 // 🔹 Configuração do upload
 const uploadDir = path.join(__dirname, '../../../uploads');
@@ -105,10 +103,12 @@ router.post('/:id/upload', upload.single('file'), (req, res) => {
   }
 
   const file = {
+    id: Date.now(), // 🔹 gera ID único
     originalName: req.file.originalname,
     mimeType: req.file.mimetype,
     size: req.file.size,
-    url: `/uploads/${req.file.filename}`
+    filename: req.file.filename, // 🔹 salva nome físico
+    url: `/uploads/${req.file.filename}` // 🔹 link público
   };
 
   material.arquivos.push(file);
@@ -128,16 +128,19 @@ router.post('/:id/upload-multi', upload.array('files', 5), (req, res) => {
   }
 
   const files = req.files.map(file => ({
+    id: Date.now() + Math.random(),
     originalName: file.originalname,
     mimeType: file.mimetype,
     size: file.size,
-    url: `/uploads/${file.filename}`
+    filename: file.filename, // 🔹 salva nome físico
+    url: `/uploads/${file.filename}` // ✅ corrigido
   }));
 
   material.arquivos.push(...files);
 
   res.json({ success: true, message: 'Arquivos anexados ao material com sucesso!', files });
 });
+
 // Listar arquivos de um material específico
 router.get('/:id/uploads', (req, res) => {
   const material = materiais.find(m => m.id === parseInt(req.params.id));
@@ -147,35 +150,19 @@ router.get('/:id/uploads', (req, res) => {
   res.json({ success: true, arquivos: material.arquivos });
 });
 
-// 🔹 Obter um upload específico
-router.get('/uploads/:id', (req, res) => {
-  const file = uploads.find(f => f.id === parseInt(req.params.id));
-  if (!file) {
-    return res.status(404).json({ success: false, message: 'Arquivo não encontrado' });
-  }
-  res.json(file);
-});
-
-// 🔹 Editar informações de um upload (ex.: renomear título)
-router.put('/uploads/:id', (req, res) => {
-  const file = uploads.find(f => f.id === parseInt(req.params.id));
-  if (!file) {
-    return res.status(404).json({ success: false, message: 'Arquivo não encontrado' });
-  }
-
-  file.titulo = req.body.titulo || file.titulo;
-  res.json({ success: true, message: 'Upload atualizado com sucesso!', file });
-});
-
-// 🔹 Apagar um upload
+// Apagar um upload específico
 router.delete('/uploads/:id', (req, res) => {
-  const index = uploads.findIndex(f => f.id === parseInt(req.params.id));
+  const material = materiais.find(m => m.arquivos.some(f => f.id === parseInt(req.params.id)));
+  if (!material) {
+    return res.status(404).json({ success: false, message: 'Material não encontrado' });
+  }
+
+  const index = material.arquivos.findIndex(f => f.id === parseInt(req.params.id));
   if (index === -1) {
     return res.status(404).json({ success: false, message: 'Arquivo não encontrado' });
   }
 
-  // Remove do array
-  const [removido] = uploads.splice(index, 1);
+  const [removido] = material.arquivos.splice(index, 1);
 
   // Remove do disco
   const filePath = path.join(uploadDir, removido.filename);

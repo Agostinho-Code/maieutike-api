@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Criar Material - Portal Educacional</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Nunito', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+    .form-container { max-width: 600px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { margin-bottom: 20px; color: #2d8b8b; }
+    .input-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+    button { background: #2d8b8b; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    button:hover { background: #236e6e; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Criar Novo Material</h2>
+    <form id="materialForm">
+      <div class="input-group">
+        <label for="titulo">Título</label>
+        <input type="text" id="titulo" required>
+      </div>
+      <div class="input-group">
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" rows="4" required></textarea>
+      </div>
+      <button type="submit"><i class="fas fa-plus"></i> Criar Material</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("materialForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const titulo = document.getElementById("titulo").value;
+      const descricao = document.getElementById("descricao").value;
+
+      try {
+        const resp = await fetch("http://localhost:3000/materiais", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ titulo, descricao })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.message || "Erro ao criar material");
+
+        // 🔹 O back-end retorna { success, message, material }
+        const materialId = data.material?.id;
+        if (!materialId) {
+          console.error("Resposta da API:", data);
+          throw new Error("ID do material não retornado pela API");
+        }
+
+        // 🔹 Salva o ID no localStorage
+        localStorage.setItem("materialSelecionado", materialId);
+
+        alert("Material criado com sucesso!");
+
+        // 🔹 Redireciona para o repositório do professor
+        window.location.href = "repositorio_professor.html";
+      } catch (error) {
+        console.error(error);
+        alert("Erro ao criar material: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

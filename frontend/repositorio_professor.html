@@ -67,11 +67,14 @@
 
     <div class="container">
         <aside class="sidebar">
-            <a href="professor.html " class="nav-item"><i class="fas fa-home"></i> Início</a>
+            <a href="homeProfessor.html" class="nav-item"><i class="fas fa-home"></i> Início</a>
             
             <a href="Meus Cursos.html" class="nav-item"><i class="fas fa-laptop-code"></i> Meus Cursos</a>
             
             <a href="#" class="nav-item active"><i class="fas fa-folder"></i> Repositório</a>
+            <div style="margin-top:20px;border-top:1px solid #eee;padding-top:10px;">
+        <a href="login.html" class="nav-item" style="color:#e74c3c;"><i class="fas fa-sign-out-alt"></i> Sair</a>
+      </div>
         </aside>
 
         <main class="main-content">
@@ -94,82 +97,149 @@
                 </div>
             </div>
 
-            <div class="section-header">
-                <h3>Arquivos Disponíveis</h3>
-            </div>
+        <div class="section-header">
+  <h3 id="materialTitulo">Arquivos Disponíveis</h3>
+</div>
+<div class="file-list" id="repoList"></div>
 
-            <div class="file-list" id="repoList">
-                </div>
         </main>
     </div>
 
-    <script>
-        // Função para carregar arquivos
-        function loadFiles() {
-            const files = JSON.parse(localStorage.getItem('repoData')) || [];
-            const list = document.getElementById('repoList');
-            list.innerHTML = '';
+  <script>
+window.onload = async () => {
+    const materialId = localStorage.getItem("materialSelecionado");
+    if (!materialId) {
+        alert("Nenhum material selecionado. Crie um material primeiro!");
+        window.location.href = "criarMaterial.html";
+        return;
+    }
 
-            files.forEach((file, index) => {
-                list.innerHTML += `
-                    <div class="file-card">
-                        <div class="file-info">
-                            <div class="file-icon"><i class="fas fa-file-alt"></i></div>
-                            <div class="file-details">
-                                <h4>${file.name}</h4>
-                                <div class="file-meta">
-                                    <span><i class="far fa-calendar-alt"></i> ${file.date}</span>
-                                    <span><i class="fas fa-user"></i> Prof. Admin</span>
-                                </div>
-                                <div class="file-comment">"${file.comment}"</div>
+    await carregarMaterialSelecionado(materialId);
+    await loadFilesFromAPI(materialId);
+};
+
+async function carregarMaterialSelecionado(materialId) {
+    try {
+        const resp = await fetch(`http://localhost:3000/materiais/${materialId}`);
+        if (!resp.ok) throw new Error("Erro ao buscar material");
+        const material = await resp.json();
+
+        document.getElementById("materialTitulo").innerText = `Material: ${material.titulo}`;
+    } catch (error) {
+        console.error(error);
+        document.getElementById("materialTitulo").innerText = "Erro ao carregar material";
+    }
+}
+
+async function addFile() {
+    const fileInput = document.getElementById('fileInput');
+    const commentInput = document.getElementById('commentInput');
+
+    if (fileInput.files.length === 0) { 
+        alert("Selecione um arquivo!"); 
+        return; 
+    }
+    if (commentInput.value.trim() === "") { 
+        alert("Digite um comentário!"); 
+        return; 
+    }
+
+    try {
+        const materialId = localStorage.getItem("materialSelecionado"); 
+        if (!materialId) {
+            alert("Crie ou selecione um material primeiro!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);   // nome correto
+        formData.append("descricao", commentInput.value);
+
+        const resp = await fetch(`http://localhost:3000/materiais/${materialId}/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!resp.ok) throw new Error("Erro ao enviar arquivo");
+
+        await resp.json();
+        alert("Arquivo anexado com sucesso!");
+
+        await loadFilesFromAPI(materialId);
+
+        fileInput.value = "";
+        commentInput.value = "";
+
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao salvar no repositório");
+    }
+}
+
+async function loadFilesFromAPI(materialId) {
+    try {
+       const resp = await fetch(`http://localhost:3000/materiais/${materialId}/uploads`);
+if (!resp.ok) throw new Error("Erro ao carregar arquivos");
+
+const data = await resp.json();
+const files = data.arquivos; // ← isso precisa bater com o back-end
+
+        const list = document.getElementById('repoList');
+        list.innerHTML = "";
+
+        if (!files || files.length === 0) {
+            list.innerHTML = "<p>Nenhum arquivo anexado ainda.</p>";
+            return;
+        }
+
+        files.forEach(file => {
+            list.innerHTML += `
+                <div class="file-card">
+                    <div class="file-info">
+                        <div class="file-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="file-details">
+                            <h4>${file.originalName || file.nome}</h4>
+                            <div class="file-meta">
+                                <span><i class="far fa-calendar-alt"></i> ${file.data || ""}</span>
+                                <span><i class="fas fa-user"></i> ${file.professor || ""}</span>
                             </div>
-                        </div>
-                        <div class="file-actions">
-                            <button class="btn-action btn-download"><i class="fas fa-download"></i> Baixar</button>
-                            <button class="btn-action btn-delete" onclick="deleteFile(${index})"><i class="fas fa-trash"></i> Excluir</button>
+                            <div class="file-comment">"${file.descricao || file.comentario || ""}"</div>
                         </div>
                     </div>
-                `;
-            });
-        }
+                    <div class="file-actions">
+                        <a href="${file.url}" class="btn-action btn-download" target="_blank">
+                            <i class="fas fa-download"></i> Baixar
+                        </a>
+                        <a href="#" onclick="deleteFile('${file.id}')" class="btn-action btn-delete">
+                            <i class="fas fa-trash"></i> Excluir
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error(error);
+        document.getElementById('repoList').innerHTML = "<p>Erro ao carregar arquivos.</p>";
+    }
+}
 
-        // Função para adicionar arquivo
-        function addFile() {
-            const fileInput = document.getElementById('fileInput');
-            const commentInput = document.getElementById('commentInput');
-            
-            if(fileInput.files.length === 0) { alert("Selecione um arquivo!"); return; }
-            if(commentInput.value === "") { alert("Digite um comentário!"); return; }
+async function deleteFile(fileId) {
+    try {
+        const resp = await fetch(`http://localhost:3000/uploads/${fileId}`, { // ✅ rota correta
+            method: "DELETE"
+        });
+        if (!resp.ok) throw new Error("Erro ao deletar arquivo");
 
-            const newFile = {
-                name: fileInput.files[0].name,
-                comment: commentInput.value,
-                date: new Date().toLocaleDateString('pt-BR') // Data automática de hoje
-            };
+        alert("Arquivo excluído com sucesso!");
+        const materialId = localStorage.getItem("materialSelecionado");
+        await loadFilesFromAPI(materialId);
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao excluir arquivo");
+    }
+}
+</script>
 
-            const files = JSON.parse(localStorage.getItem('repoData')) || [];
-            files.push(newFile);
-            localStorage.setItem('repoData', JSON.stringify(files));
-            
-            // Limpar campos e recarregar
-            fileInput.value = "";
-            commentInput.value = "";
-            loadFiles();
-            alert("Arquivo salvo com sucesso!");
-        }
 
-        // Função para deletar
-        function deleteFile(index) {
-            if(confirm("Tem certeza que deseja apagar este arquivo?")) {
-                const files = JSON.parse(localStorage.getItem('repoData')) || [];
-                files.splice(index, 1);
-                localStorage.setItem('repoData', JSON.stringify(files));
-                loadFiles();
-            }
-        }
-
-        // Carregar ao abrir a página
-        window.onload = loadFiles;
-    </script>
 </body>
 </html>
